@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -72,23 +74,40 @@ public partial class MainWindow : Window
         if (config == null) return;
 
         var frames = _characterLoader.GetStateFrames(characterId, "idle");
-        if (frames.Count == 0) return;
 
-        int fps = config.DefaultFps.GetValueOrDefault("idle", 8);
-        _animationEngine.LoadAnimation(frames, fps, loop: true);
-        _animationEngine.Play();
-
-        // 绑定当前帧到 Image
-        _animationEngine.PropertyChanged += (s, e) =>
+        // 如果有动画帧，播放动画
+        if (frames.Count > 0)
         {
-            if (e.PropertyName == nameof(SpriteAnimationEngine.CurrentFrame))
-            {
-                PetImage.Source = _animationEngine.CurrentFrame;
-            }
-        };
+            int fps = config.DefaultFps.GetValueOrDefault("idle", 8);
+            _animationEngine.LoadAnimation(frames, fps, loop: true);
+            _animationEngine.Play();
 
-        // 初始设置图片
-        PetImage.Source = _animationEngine.CurrentFrame;
+            // 绑定当前帧到 Image
+            _animationEngine.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(SpriteAnimationEngine.CurrentFrame))
+                {
+                    PetImage.Source = _animationEngine.CurrentFrame;
+                }
+            };
+
+            PetImage.Source = _animationEngine.CurrentFrame;
+        }
+        else
+        {
+            // 没有动画帧时，显示静态图片 (icon.png)
+            var iconPath = _characterLoader.GetCharacterIconPath(characterId);
+            if (File.Exists(iconPath))
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(iconPath, UriKind.Absolute);
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+                PetImage.Source = bitmap;
+            }
+        }
     }
 
     /// <summary>
