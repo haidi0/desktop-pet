@@ -1,0 +1,23 @@
+{
+  "id": "zexiaoan",
+  "name": "泽小安",
+  "version": "1.0",
+  "author": "",
+  "icon": "icon.png",
+  "defaultFps": {
+    "idle": 8,
+    "walk_right": 12,
+    "walk_left": 12,
+    "sleep": 4,
+    "drag": 10,
+    "interact": 15
+  },
+  "states": {
+    "idle": { "folder": "idle", "loop": true },
+    "walk_right": { "folder": "walk_right", "loop": true },
+    "walk_left": { "folder": "walk_left", "loop": true },
+    "sleep": { "folder": "sleep", "loop": true },
+    "drag": { "folder": "drag", "loop": false },
+    "interact": { "folder": "interact", "loop": false }
+  }
+}
